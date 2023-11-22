@@ -9,10 +9,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-public class TestController {
+public class PostController {
 
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private PostService postService;
 
     @RequestMapping("/test")
     @ResponseBody public String test() {
@@ -23,6 +25,10 @@ public class TestController {
     public String main(Model model) {
         //1. DB에서 데이터 꺼내오기
         List<Post> postList = postRepository.findAll();
+        if(postList.isEmpty()){
+            addpost();
+            return "redirect:/";
+        }
 
         //2. 꺼내온 데이터를 템플릿으로 보내기
         model.addAttribute("postList", postList);
@@ -54,10 +60,27 @@ public class TestController {
     @PostMapping("/update")
     public String update(Long id, String title, String content) {
         Post post = postRepository.findById(id).get();
+        if(title.trim().length() == 0){
+            title = "제목없음";
+        }
         post.setTitle(title);
         post.setContent(content);
 
         postRepository.save(post);
         return "redirect:/detail/" + id;
+    }
+
+    @PostMapping("/delete")
+    public String delete(Long id) {
+        this.postService.Delete(id);
+        return "redirect:/";
+    }
+
+    public void addpost(){
+        Post post = new Post();
+        post.setTitle("TEST");
+        post.setContent("");
+        post.setCreateDate(LocalDateTime.now());
+        this.postRepository.save(post);
     }
 }

@@ -12,7 +12,7 @@
         <div class="side-menu">
             <!--            3. 템플릿에서 게시물 목록 출력-->
             <ul>
-                <li th:each="post : ${postList}">
+                <li th:each="post : ${postList}" th:class="${post.id == targetPost.id} ? 'click' : ''"  >
                     <a th:href="@{|/detail/${post.id}|}" th:text="${post.title}"></a>
                 </li>
             </ul>
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="content">
-            <form action="/update" method="post">
+            <form  method="post">
                 <div>
                     <input type="hidden" name="id" th:value="${targetPost.id}">
                 </div>
@@ -34,7 +34,8 @@
                     <textarea name="content" cols="30" rows="10" th:text="${targetPost.content}"></textarea>
                 </div>
                 <div>
-                    <input type="submit" value="수정">
+                    <input type="submit" value="수정" formaction="/update">
+                    <input type="submit" value="삭제" formaction="/delete">
                 </div>
             </form>
         </div>
